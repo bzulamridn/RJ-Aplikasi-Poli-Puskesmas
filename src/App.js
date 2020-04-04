@@ -1,19 +1,39 @@
 import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import axios from 'axios';
+import TextField from '@material-ui/core/TextField';
+import Button from '@material-ui/core/Button';
 import './App.css';
 
 function App() {
 
   const [tindakan, TindakanList] = useState([])
-  const [obat,setObat] =useState([])
-  const [jadwalminum, setJadwalminum] =useState([])
+  const [obat, setObat] = useState([])
+  const [jadwalminum, setJadwalminum] = useState([])
+  const [rmlist, setRmlist] = useState([])
+  const [rm, setRm] = useState('');
+  const [rmarray, setRmarray] = useState([]);
 
   useEffect(() => {
-
+    onload()
   }, [])
 
-  
+  async function onload() {
+    await axios.get('http://localhost:3000/icd')
+      .then(res => {
+        setRmlist(res.data)
+        console.log(res.data)
+      })
+  }
+
+  async function pushIcd() {
+    let batas = await rm.indexOf('*');
+    let rmfix =  await rm.substring(0, batas);
+    setRmarray([...rmarray, rmfix])
+    console.log(rm)
+    console.log(rmfix)
+  }
 
   return (
     <div style={{ padding: 20 }}>
@@ -121,18 +141,50 @@ function App() {
             </nav>
           </div>
           <div className="row" style={{ backgroundColor: '#ecf0f1', }}>
-            <Autocomplete
-              id="free-solo-demo"
-              freeSolo
-              options={pasienlist.map((option, index) => +index + "- " + option.rm + " " + option.nama + " " + option.bpjs)}
-              onChange={(e, v) => setIndex(v)}
-              renderInput={(params) => (
-                <TextField {...params} label="Nomor Rekam Medis / Nama Lengkap" margin="normal" variant="outlined" onChange={({ target }) => setIndex(target.value)} />
-              )}
-            />
-
+            <div className="col-lg-9">
+              <Autocomplete
+                id="free-solo-demo"
+                freeSolo
+                options={rmlist.map((option, index) => option.icd + " * " + option.nama_penyakit)}
+                onChange={(e, v) => setRm(v)}
+                renderInput={(params) => (
+                  <TextField {...params} label="ICD - Nama penyakit" margin="normal" variant="outlined" onChange={({ target }) => setRm(target.value)} />
+                )}
+              />
+            </div>
+            <div className="col-lg-3">
+              <Button
+                variant="contained"
+                color="secondary"
+                size="large"
+                style={{ width: '100%' }}
+                onClick={() => pushIcd()}
+              >
+                Tambah
+                  </Button>
+            </div>
           </div>
+          <div className="row" style={{ backgroundColor: '#ecf0f1', }}>
+            <div className="col-lg-12">
+              <table class="table">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Nama Penyakit</th>
+                    <th scope="col">Kode ICD</th>
+                  </tr>
+                </thead>
+                <tbody>
 
+                  {rmarray.map((data, index) =>
+                    <tr>
+                      <td>{data}</td>
+                      <td>{data}</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
 
         </div>
       </div>
