@@ -104,13 +104,14 @@ function App() {
   const [printerlist, setPrinterlist] = useState([])
   const [printer, setPrinter] = useState('')
 
+  const URL = 'http://45.13.132.168:3000'
 
   useEffect(() => {
     RealTime()
   })
 
   async function login() {
-    await axios.get('http://localhost:3000/faskesbyid/' + kodeFaskes)
+    await axios.get(URL+'/faskesbyid/' + kodeFaskes)
       .then(res => {
         if (res.data.length === 0) {
           alert("Kode Faskes Salah")
@@ -154,17 +155,17 @@ function App() {
   }
 
   async function onload() {
-    await axios.get('http://localhost:3000/icd')
+    await axios.get(URL+'/icd')
       .then(res => {
         setRmlist(res.data)
         console.log(res.data)
       })
-    await axios.get('http://localhost:3000/obat')
+    await axios.get(URL+'/obat')
       .then(res => {
         setObatlist(res.data)
         console.log(res.data)
       })
-    await axios.get('http://localhost:3000/jadwal')
+    await axios.get(URL+'/jadwal')
       .then(res => {
         setJadwallist(res.data)
         console.log(res.data)
@@ -244,7 +245,7 @@ function App() {
         position: toast.POSITION.TOP_RIGHT
       });
     } else {
-      axios.post('http://localhost:3000/createriwayatpasien/', {
+      axios.post(URL+'/createriwayatpasien/', {
         norm: pasien.rm,
         poli: namaPoli,
         namadokter: dokter,
@@ -274,7 +275,7 @@ function App() {
         position: toast.POSITION.TOP_RIGHT
       });
     } else {
-      await axios.get('http://localhost:3000/getrm/' + pasien.rm)
+      await axios.get(URL+'/getrm/' + pasien.rm)
         .then(res => {
           setRiwayatpasien(res.data)
           console.log(res.data)
@@ -285,7 +286,7 @@ function App() {
   }
 
   function getPasienbyId(id) {
-    axios.get('http://localhost:3000/pasienbyid/' + id)
+    axios.get(URL+'/pasienbyid/' + id)
       .then(res => {
         console.log(res.data)
         setPasien(res.data[0])
@@ -306,6 +307,11 @@ function App() {
           setTimeout(() => { open.close() }, 5000);
         })
     }
+  }
+
+  function tesPrint(){
+    const open = window.open("http://localhost/printpos/print.php?nomor=0000&rm=Sukses&printer=" + printer, '_blank', 'location=yes,height=100,width=100,scrollbars=yes,status=yes');
+    setTimeout(() => { open.close() }, 5000);
   }
 
   async function pushIcd() {
@@ -491,7 +497,7 @@ function App() {
                                   <option value={data.nama_printer}> {data.loket} </option>
                                 )}
                               </select>
-                              <Button color="inherit">Test Printer</Button>
+                              <Button color="inherit" onClick={ () => tesPrint() }>Test Printer</Button>
                               </div>
                             </div>
                             {poli.map((data, index) =>
@@ -827,11 +833,9 @@ function App() {
 
             <CssBaseline />
             <div className={classes.paper}>
-              <Avatar className={classes.avatar}>
-
-              </Avatar>
-              <Typography component="h1" variant="h5">
-                Login Form
+            <img src="https://image.flaticon.com/icons/svg/2798/2798914.svg" width="200" />
+              <Typography component="h1" variant="h6" style={{ marginTop:20 }} >
+                Pelayanan Puskesmas Sambas
         </Typography>
               <form className={classes.form} noValidate>
                 <TextField
@@ -878,9 +882,9 @@ function App() {
           </Button>
                 <Grid container>
                   <Grid item xs>
-                    <Link href="#" variant="body2">
+                    {/* <Link href="#" variant="body2">
                       Silahkan Menghubungi Admin Jika Lupa Password
-              </Link>
+              </Link> */}
                   </Grid>
 
                 </Grid>
